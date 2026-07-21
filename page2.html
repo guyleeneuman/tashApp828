@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tashApp</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <img class="navbar" src="assets/logos/logos.png" alt="icon 1">
+    <img class="title" src="assets/titles/title.png" alt="icon 1">
+        <img class="title2" src="assets/buttons/keva.png" alt="icon 1">
+
+<button class="menuBtn" onclick="menu()">
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         height="24px" 
+         viewBox="0 -960 960 960" 
+         width="24px" 
+         fill="#431046">
+         
+        <path d="M183.5-183.5Q160-207 160-240t23.5-56.5Q207-320 240-320t56.5 23.5Q320-273 320-240t-23.5 56.5Q273-160 240-160t-56.5-23.5Zm240 0Q400-207 400-240t23.5-56.5Q447-320 480-320t56.5 23.5Q560-273 560-240t-23.5 56.5Q513-160 480-160t-56.5-23.5Zm240 0Q640-207 640-240t23.5-56.5Q687-320 720-320t56.5 23.5Q800-273 800-240t-23.5 56.5Q753-160 720-160t-56.5-23.5Zm-480-240Q160-447 160-480t23.5-56.5Q207-560 240-560t56.5 23.5Q320-513 320-480t-23.5 56.5Q273-400 240-400t-56.5-23.5Zm240 0Q400-447 400-480t23.5-56.5Q447-560 480-560t56.5 23.5Q560-513 560-480t-23.5 56.5Q513-400 480-400t-56.5-23.5Zm240 0Q640-447 640-480t23.5-56.5Q687-560 720-560t56.5 23.5Q800-513 800-480t-23.5 56.5Q753-400 720-400t-56.5-23.5Zm-480-240Q160-687 160-720t23.5-56.5Q207-800 240-800t56.5 23.5Q320-753 320-720t-23.5 56.5Q273-640 240-640t-56.5-23.5Zm240 0Q400-687 400-720t23.5-56.5Q447-800 480-800t56.5 23.5Q560-753 560-720t-23.5 56.5Q513-640 480-640t-56.5-23.5Zm240 0Q640-687 640-720t23.5-56.5Q687-800 720-800t56.5 23.5Q800-753 800-720t-23.5 56.5Q753-640 720-640t-56.5-23.5Z"/>
+    </svg>
+</button>
+    <!-- <div class="byGuylee">פותח על ידי רב"ט גיא-לי נוימן/ גפ"ה ביסל"ח</div> -->
+
+<!-- Overlay -->
+<div id="popupOverlay" class="popupOverlay">
+
+    <div class="popupBox">
+
+        <img class="popupBg" src="assets/elements/popUp.png" alt="">
+
+        <div class="popupText">
+המשאלה שלכם התגשמה! הגעתם לת"ש קבע. בחרו בנושא הרלוונטי עבורכם ותגיעו לקישור / תמונה /מסמך הרלוונטיים עבורו. לחזרה לכלל הנושאים יש ללחוץ על כפתור התפריט מצד ימין למעלה.        </div>
+
+        <img
+            id="closePopup"
+            class="closePopup"
+            src="assets/buttons/closeBtn.png"
+            alt="סגור">
+
+    </div>
+
+</div>
+
+<!-- כפתור מידע קטן -->
+<button id="infoBtn">
+    ⓘ
+</button>
+
+<!-- <div class="topicsContainer">
+
+    <button onclick="openTopic(0)">שימוש במערכת ת"ש בטאץ'</button>
+    <button onclick="openTopic(1)">חופשות מיוחדות</button>
+    <button onclick="openTopic(2)">היתר עבודה בשל מצוקה כלכלית</button>
+    <button onclick="openTopic(3)">הקלות בתנאי השירות- הת"ש</button>
+    <button onclick="openTopic(4)">חייל בודד</button>
+    <button onclick="openTopic(5)">חייל "זכאי סיוע"</button>
+    <button onclick="openTopic(6)">החייל הנשוי</button>
+    <button onclick="openTopic(7)">ערוצי סיוע כלכלי</button>
+    <button onclick="openTopic(8)">טיפול שיניים פרוסטטי /אורטודנטי</button>
+    <button onclick="openTopic(9)">תשמ"ש תשלומי משפחה</button>
+    <button onclick="openTopic(10)">אובדן ציוד אישי</button>
+
+</div> -->
+<div class="topicsContainer" id="resourcesContainer"></div>
+
+<!-- פופאפ נושא -->
+<div id="topicPopup" class="topicOverlay">
+
+    <div class="topicBox">
+
+        <h1 id="topicTitle"></h1>
+
+        <div id="topicContent" class="topicContent"></div>
+
+        <button class="backBtn" onclick="closeTopic()">
+            חזרה לכל הנושאים
+        </button>
+
+    </div>
+
+</div>
+
+<div id="imagePopup" class="topicOverlay">
+
+    <div class="topicBox">
+
+        <img id="imagePreview"
+        style="
+        width:100%;
+        max-height:100vh;
+        object-fit:contain;
+        ">
+
+        <button class="backBtn"
+        onclick="closeImage()">
+        סגירה
+        </button>
+
+    </div>
+
+</div>
+</body>
+<script> 
+const popup = document.getElementById("popupOverlay");
+const closePopup = document.getElementById("closePopup");
+const infoBtn = document.getElementById("infoBtn");
+
+const STORAGE_KEY = "tashAppPopupSeen";
+
+// אם זו הפעם הראשונה
+window.addEventListener("load", () => {
+
+    if (!localStorage.getItem(STORAGE_KEY)) {
+
+        popup.classList.add("show");
+
+        localStorage.setItem(STORAGE_KEY, "true");
+    }
+
+});
+
+const resources = [
+
+{
+    title:"הוצאות חינוך לילד בעל מוגבולות",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/L6H262UM86"
+},
+
+{
+    title:"בני משפחה גרעינית מורחבתת",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/YK6LC2WVNK"
+},
+
+{
+    title:"רמב\"י",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/G3AMEZAVQR"
+},
+
+{
+    title:"אובדן ציוד אישי",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/TYN6AWJGW8"
+},
+
+{
+    title:"היתר עבודה פרטית",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/8TX4SA83PT"
+},
+{
+    title:"הובלות",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/KULKM7NT9R"
+},
+{
+    title:"שכר דירה",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/STLMXA8D3Y"
+},
+{
+    title:"הורה לילד בעל מוגבלות",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/276UZGUNLB"
+},
+{
+    title:"סימולטור שכר דירה",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/urlexpired.aspx"
+},
+{
+    title:"סמוכים לשולחן",
+    type:"link",
+    link:"https://mofet-frontend.wiz.digital.idf.il/m/NRQW4K7LSY"
+},
+{
+    title:"החזרי גני ילדים",
+    type:"image",
+    link:"assets/keva/ganim.jpeg"
+},
+{
+    title:"החזרי קייטנות",
+    type:"image",
+    link:"assets/keva/keytana.jpeg"
+},
+{
+    title:"החזרי הוצאות",
+    type:"document",
+    link:"assets/keva/החזר הוצאות למשרתי קבע 2026 - חטיבת ביסל״ח.pdf"
+},
+{
+    title:"מעטפת החייל הבודד בישרות קבע",
+    type:"image",
+    link:"assets/keva/מדיניות - מעטפת החייל הבודד בשירות קבע.pdf"
+},
+];
+
+
+
+const container = document.getElementById("resourcesContainer");
+
+
+resources.forEach((item)=>{
+
+    const btn=document.createElement("button");
+
+    btn.innerHTML=item.title;
+
+
+    btn.onclick=()=>{
+
+        openResource(item);
+
+    };
+
+
+    container.appendChild(btn);
+
+});
+
+
+
+function openResource(item){
+
+
+    if(item.type==="link"){
+
+        window.open(item.link,"_blank");
+
+    }
+
+
+
+    if(item.type==="document"){
+
+        window.open(item.link,"_blank");
+
+    }
+
+
+
+    if(item.type==="image"){
+
+        document.getElementById("imagePreview").src=item.link;
+
+        document.getElementById("imagePopup")
+        .classList.add("show");
+
+    }
+
+}
+// סגירה
+closePopup.onclick = () => {
+
+    popup.classList.remove("show");
+
+};
+
+// לחיצה מחוץ לפופאפ
+popup.onclick = (e)=>{
+
+    if(e.target===popup){
+
+        popup.classList.remove("show");
+    }
+
+};
+
+// פתיחה ידנית
+infoBtn.onclick = ()=>{
+
+    popup.classList.add("show");
+
+}; 
+function menu() {   
+        window.location.href = "menu.html";
+}
+
+function closeImage(){
+
+document.getElementById("imagePopup")
+.classList.remove("show");
+
+}
+</script> 
+<style>
+    .title{
+        top: 12%;
+        width:30vw;
+        right: 50%;
+    }
+
+ 
+.popupOverlay{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.6);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+}
+
+.popupOverlay.show{
+    display:flex;
+}
+
+/* קופסה */
+
+.popupBox{
+
+    position:relative;
+
+    width:min(85vw,420px);
+
+    animation:popup .35s ease;
+}
+
+/* תמונת הרקע */
+
+.popupBg{
+
+    width:100%;
+    display:block;
+}
+
+/* הטקסט */
+
+.popupText{
+
+    position:absolute;
+
+    top:15%;
+    left:12%;
+    right:12%;
+
+    color:#341a42;
+
+    font-size:1.1rem;
+direction: rtl;
+    font-weight: 600;
+    text-align:center;
+
+    line-height:1.6;
+}
+
+
+
+/* כפתור סגירה */
+
+.closePopup{
+
+    position:absolute;
+
+    width:50px;
+
+    bottom:43%;
+    left:50%;
+
+    transform:translateX(-50%);
+width: 20vw;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.closePopup:active{
+
+    transform:translateX(-50%) scale(.9);
+}
+
+/* כפתור מידע קטן */
+
+#infoBtn{
+
+    position:fixed;
+
+    left:10px;
+
+    bottom:10px;
+
+    width:38px;
+    height:38px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background: none;
+
+    color:rgb(84, 7, 88);
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    z-index:1000;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+}
+
+@keyframes popup{
+
+    from{
+        opacity:0;
+        transform:scale(.8);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+.menuBtn{
+    position: fixed;
+    top: 45px;
+    right: 15px;
+
+    width:45px;
+    height:45px;
+
+    border:none;
+    background:none;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:5000;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+
+    transition:.25s;
+}
+
+
+.menuBtn:hover{
+    transform:scale(1.08);
+}
+
+
+.menuBtn:active{
+    transform:scale(.9);
+}
+
+
+.menuBtn svg{
+    pointer-events:none;
+}
+
+.topicsContainer{
+
+    margin-top:38vh;
+margin-bottom: 10vh;
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+
+.topicsContainer button{
+
+    width:60vw;
+
+    padding:10px;
+
+    background:#431046b7;
+    color:#e2d6fc;
+
+    text-align:center;
+
+    border:none;
+
+    font-family:yarden;
+
+    border-radius:18px;
+
+    font-size:1.9rem;
+
+    font-weight:500;
+
+direction: rtl;    cursor:pointer;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.356);
+
+    transition:.2s;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.topicsContainer button{
+    padding-top:7px;
+    padding-bottom:13px;
+}
+
+.topicsContainer button:active{
+
+    transform:scale(.95);
+
+}
+
+
+
+/* הפופאפ של הנושא */
+
+.topicOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.65);
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    z-index:99999;
+
+}
+
+
+
+.topicOverlay.show{
+
+    display:flex;
+
+}
+
+
+
+.topicBox{
+
+    width:65vw;
+    max-width:500px;
+
+    height:75vh;
+
+    background:#f0e9fffc;
+
+    border-radius:25px;
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    direction:rtl;
+
+    animation:popup .3s ease;
+
+}
+
+
+
+#topicTitle{
+
+    text-align:center;
+
+    color:#360d38;
+width: 67vw;
+    margin-top:5px;
+
+    font-size:3rem;
+
+    /* היטל */
+    text-shadow:
+        2px 3px 5px rgba(0,0,0,0.25);
+
+}
+
+.topicsContainer button{
+
+width:60vw;
+
+padding:10px;
+
+background:#431046b7;
+
+color:#e2d6fc;
+
+border:none;
+border-radius:18px;
+
+font-size:1.9rem;
+
+font-weight:500;
+
+cursor:pointer;
+
+box-shadow:0 5px 15px rgba(0,0,0,0.356);
+
+}
+
+.topicContent{
+
+    overflow-y:auto;
+
+    flex:1;
+
+    text-align:right;
+
+    line-height:1.2;
+
+    font-size:1.2rem;
+
+}
+
+
+
+.topicContent h1{
+font-size: 1.9rem;
+    color:#431046;
+
+}
+
+
+.topicContent h2{
+font-size: 1.6rem;
+    color:#89458e;
+
+}
+
+
+
+.backBtn{
+
+    margin-top:3px;
+padding-top: 4px;
+padding-bottom: 10px;
+    border:none;
+
+    border-radius:12px;
+
+    background:#431046;
+left:0%;
+    color:white;
+
+    font-size:1.3rem;
+font-family: yarden;
+    cursor:pointer;
+width: 35vw;
+}
+</style>
+</html>
